@@ -30,3 +30,57 @@ def recognize_letters(image):
     extracted_letters = extracted_text[:1]
 
     return extracted_letters
+
+def extract_characters(image, color_image, width, height):
+    # Load the image
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+    # Apply thresholding
+    _, thresh = cv2.threshold(gray, 240, 255, cv2.THRESH_BINARY)
+
+    # Find contours
+    contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+    # Initialize an empty list to store tuples of characters and their x positions
+    characters_with_positions = []
+
+    # Extract and save each character region
+    for i, contour in enumerate(contours):
+        x, y, w, h = cv2.boundingRect(contour)
+
+        x = x - 10
+        if x < 0 :
+            x = 0
+
+        w = w + 20
+        if x + w > width:
+            w = width - x
+
+        y = y - 10
+        if y < 0:
+            y = 0
+
+        h = h + 20
+        if y + h > height:
+            h = height - y
+
+        char_image = image[y:y+h, x:x+w]
+        #cv2.imwrite(f'character_{i}.png', char_image)
+        #char_image = cv2.imread(f'character_{i}.png')
+        character = recognize_letters(char_image)
+
+        # Append a tuple of character and its x position to the list
+        characters_with_positions.append((character, x))
+
+    # Sort the characters based on their x positions
+    sorted_characters = sorted(characters_with_positions, key=lambda item: item[1])
+
+    # Extract characters from the sorted list
+    sorted_characters_only = [char for char, _ in sorted_characters]
+
+    # Merge the characters into a single string
+    merged_string = ''.join(sorted_characters_only)
+
+    # Print or use the merged string as needed
+    # print(merged_string)
+    return merged_string

@@ -84,3 +84,37 @@ def extract_characters(image, color_image, width, height):
     # Print or use the merged string as needed
     # print(merged_string)
     return merged_string
+
+# Multi images import
+def import_multi_images(folder_path):
+    image_files = os.listdir(folder_path)
+    count = 0
+    for filename in image_files:
+        if filename.endswith((".jpg", ".jpeg", ".png", ".bmp")):
+            # Construct the full path to the image file
+            image_path = os.path.join(folder_path, filename)
+            image = cv2.imread(image_path)
+
+            # Get image width and height
+            height, width, _ = image.shape
+            
+            # Fill non-white areas with black
+            gray_image = fill_non_white_with_black(image)
+            
+            extracted_text = extract_characters(gray_image, image, width, height)
+            if filename[:4] != extracted_text.upper():
+                count += 1
+                print(filename[:4] + ":" + extracted_text)
+    print("count:" + count)
+
+def import_single_image(file_path):
+    image = cv2.imread(file_path)
+
+    # Get image width and height
+    height, width, _ = image.shape
+    
+    # Fill non-white areas with black
+    gray_image = fill_non_white_with_black(image)
+    
+    extracted_text = extract_characters(gray_image, image, width, height)
+    print(extracted_text)

@@ -118,3 +118,8 @@ def import_single_image(file_path):
     
     extracted_text = extract_characters(gray_image, image, width, height)
     print(extracted_text)
+
+folder_path = "./imagies"
+file_path = "./imagies/CBYH.png"
+# import_multi_images(folder_path)
+import_single_image(file_path)
